@@ -87,6 +87,10 @@ throwing the hips to the front (Class E)
 <h4>Step 1 - Loading the data</h4>
 <p>I will begin be loading the dataset. First set the working directory, then use read.csv with the approprate na.strings option set to fill in <em>NA</em> for the values that are not meaningful. After exploring the data, I chose to use NA, a blank, and a #DIV/0! string as the NA values.</p>
 <pre class="r"><code>setwd(&quot;~/Coursera/Data Scientist/8 - Practical Machine Learning/Peer_Assign&quot;)
+## load Knitr, and set the caching option in case of re-runs
+library(knitr)</code></pre>
+<pre><code>## Warning: package 'knitr' was built under R version 3.1.2</code></pre>
+<pre class="r"><code>opts_chunk$set(echo=TRUE, cache=TRUE)
 trainData&lt;-read.csv(&quot;./data/pml-training.csv&quot;,na.strings=c(&quot;NA&quot;,&quot;&quot;,&quot;#DIV/0!&quot;))
 testData&lt;-read.csv(&quot;./data/pml-testing.csv&quot;,na.strings=c(&quot;NA&quot;,&quot;&quot;,&quot;#DIV/0!&quot;))</code></pre>
 </div>
@@ -172,15 +176,15 @@ predictBT&lt;-predict(modelFitBT,testing)
 cmBT&lt;-confusionMatrix(predictBT,testing$classe)
 accuracyRF&lt;-cmRF$overall['Accuracy']
 accuracyBT&lt;-cmBT$overall['Accuracy']</code></pre>
-<p>From the code above, it can be determined that the accuracy of the <em>boosted trees</em> model is 0.9566695 and the <em>random forest</em> model produces an accuracy of 0.9886151. (The actual confusion matrices generated above will be shown in the appendix rather then here in the text.)<br /> The accuracy shown above from the <em>confusionMatrix</em> shows how well the models performed against the know set of results. To determine an out of sample error, it would simply be 1 - the accuracy. Therefore, the out of sample error for the <em>boosted trees</em> model is 0.0433305 and the out of sample error for the <em>random forest</em> model is 0.0113849<br /> With the accuracy at better than 99% for the <em>random forest</em> model, I will proceed to process the test data with that model. While the boosted trees model is turning in an accuracy of better than 95% (which is still great!) the random forest is working better for this dataset.</p>
+<p>From the code above, it can be determined that the accuracy of the <em>boosted trees</em> model is 0.9597281 and the <em>random forest</em> model produces an accuracy of 0.9949023. (The actual confusion matrices generated above will be shown in the appendix rather then here in the text.)<br /> The accuracy shown above from the <em>confusionMatrix</em> shows how well the models performed against the know set of results. To determine an out of sample error, it would simply be 1 - the accuracy. Therefore, the out of sample error for the <em>boosted trees</em> model is 0.0402719 and the out of sample error for the <em>random forest</em> model is 0.0050977<br /> With the accuracy at better than 99% for the <em>random forest</em> model, I will proceed to process the test data with that model. While the boosted trees model is turning in an accuracy of better than 95% (which is still great!) the random forest is working better for this dataset.</p>
 </div>
 <div id="conclusion" class="section level4">
 <h4>Conclusion</h4>
-<p>As a wrap-up, I have demonstarted:<br />- how to load the training and testing dasets provided<br />- Cleaned the datasets to remove NA values and then remove columms that had all NA values<br />- Partition the training dataset into two halves. One to train the model, and one to test it’s accuracy.<br />- Fit a model to the training data. I fit two models, one using a random forest and one using a boosted trees alogrithm. AS part of the fitting, I used a repeated cross validation method to tune the model and avoid over fitting. - Validated the accuracy of the two models, and their out of sample error rates. While both models were good, the random forest was better at over a 99% accuracy rate.<br />- Finally (in step 6 below) use the fitted random forest model to predict the answers of the test dataset which will be submitted to Coursera.</p>
+<p>As a wrap-up, I have demonstarted:<br />- how to load the training and testing dasets provided<br />- Cleaned the datasets to remove NA values and then remove columms that had all NA values<br />- Partition the training dataset into two halves. One to train the model, and one to test it’s accuracy.<br />- Fit a model to the training data. I fit two models, one using a random forest and one using a boosted trees alogrithm. AS part of the fitting, I used a repeated cross validation method to tune the model and avoid over fitting.<br />- Validated the accuracy of the two models, and their out of sample error rates. While both models were good, the random forest was better at over a 99% accuracy rate.<br />- Finally (in step 6 below) use the fitted random forest model to predict the answers of the test dataset which will be submitted to Coursera.</p>
 </div>
 <div id="step-6---process-the-test-data" class="section level4">
 <h4>Step 6 - Process the Test data</h4>
-<p>As the lest step, use the <em>testData</em> file that I read in with the training dataset and cleaned the same way. With the testData file, run the prediction model, and then call the given function to write the results into separate files. AS one last process, I will display the answers that were written to the files here in the text.</p>
+<p>As the lest step, use the <em>testData</em> file that I read in with the training dataset and cleaned the same way. With the testData file, run the prediction model, and then call the given function to write the results into separate files. As one last step, I will display the answers that were written to the files here in the text.</p>
 <pre class="r"><code>## given function
 pml_write_files = function(x){
   n = length(x)
@@ -205,10 +209,77 @@ print(results)</code></pre>
 </div>
 <div id="appendix" class="section level4">
 <h4>Appendix</h4>
-<p>Here are the confusion matrices for the two fitted models referenced earlier in the text.<br /> - Boosted Trees</p>
+<p>Here are the confusion matrices for the two fitted models referenced earlier in the text.</p>
+<ul>
+<li>Boosted Trees</li>
+</ul>
+<pre class="r"><code>cmBT</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1651   47    0    0    3
+##          B   17 1046   19    1    9
+##          C    4   43  991   34   16
+##          D    2    0   13  919   13
+##          E    0    3    3   10 1041
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9597          
+##                  95% CI : (0.9544, 0.9646)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.949           
+##  Mcnemar's Test P-Value : 3.129e-08       
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            0.9863   0.9183   0.9659   0.9533   0.9621
+## Specificity            0.9881   0.9903   0.9800   0.9943   0.9967
+## Pos Pred Value         0.9706   0.9579   0.9108   0.9704   0.9849
+## Neg Pred Value         0.9945   0.9806   0.9927   0.9909   0.9915
+## Prevalence             0.2845   0.1935   0.1743   0.1638   0.1839
+## Detection Rate         0.2805   0.1777   0.1684   0.1562   0.1769
+## Detection Prevalence   0.2890   0.1856   0.1849   0.1609   0.1796
+## Balanced Accuracy      0.9872   0.9543   0.9730   0.9738   0.9794</code></pre>
 <ul>
 <li>Random Forest</li>
 </ul>
+<pre class="r"><code>cmRF</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1674    5    0    0    0
+##          B    0 1133    6    0    0
+##          C    0    1 1020   16    0
+##          D    0    0    0  948    2
+##          E    0    0    0    0 1080
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9949          
+##                  95% CI : (0.9927, 0.9966)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9936          
+##  Mcnemar's Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            1.0000   0.9947   0.9942   0.9834   0.9982
+## Specificity            0.9988   0.9987   0.9965   0.9996   1.0000
+## Pos Pred Value         0.9970   0.9947   0.9836   0.9979   1.0000
+## Neg Pred Value         1.0000   0.9987   0.9988   0.9968   0.9996
+## Prevalence             0.2845   0.1935   0.1743   0.1638   0.1839
+## Detection Rate         0.2845   0.1925   0.1733   0.1611   0.1835
+## Detection Prevalence   0.2853   0.1935   0.1762   0.1614   0.1835
+## Balanced Accuracy      0.9994   0.9967   0.9953   0.9915   0.9991</code></pre>
 </div>
 </div>
 </div>
